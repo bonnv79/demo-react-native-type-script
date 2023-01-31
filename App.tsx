@@ -2,10 +2,11 @@ import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import * as Notifications from 'expo-notifications'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from 'react-native-elements'
 
-import HomeScreen from './screens/HomeScreen'
+import useCachedResources from './hooks/useCachedResources';
+import useColorScheme from './hooks/useColorScheme';
+import Navigation from './navigation';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -16,14 +17,19 @@ Notifications.setNotificationHandler({
 })
 
 export default function App() {
-  return (
-    <SafeAreaProvider>
-      <ThemeProvider>
-        <NavigationContainer>
-          <HomeScreen />
+  const isLoadingComplete = useCachedResources();
+  const colorScheme = useColorScheme();
+
+  if (!isLoadingComplete) {
+    return null;
+  } else {
+    return (
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <Navigation colorScheme={colorScheme} />
           <StatusBar />
-        </NavigationContainer>
-      </ThemeProvider>
-    </SafeAreaProvider>
-  )
+        </ThemeProvider>
+      </SafeAreaProvider>
+    );
+  }
 }

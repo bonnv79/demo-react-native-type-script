@@ -31,3 +31,30 @@ export const sendPushNotification = async (pushToken: string, title: string, bod
   await axios.post(EXPO_SERVER_URL, message)
   alert('Triệu hồi bạn trai 👦 thành công!')
 }
+
+export const getItems = async () => {
+  const response = await axios.get(`https://express-bng.vercel.app/api/records`);
+  const result = response?.data;
+  return result || {};
+}
+
+export const getItemsByPage = async () => {
+  const response = await axios.get(`https://express-bng.vercel.app/api/record?page=0&pageSize=10`);
+  const result = response?.data;
+  return result || {};
+}
+
+export const createItem = async (data: any) => {
+  const req = {
+    name: data?.title,
+    position: data?.content,
+  }
+  await axios.post('https://express-bng.vercel.app/api/record/add', req)
+  // alert('Create item successlly')
+}
+
+export const deleteItem = async (id: String) => {
+  const response = await axios.delete(`https://express-bng.vercel.app/api/record/${id}`);
+  const result = response?.data;
+  return result || {};
+}

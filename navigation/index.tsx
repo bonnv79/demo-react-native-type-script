@@ -14,10 +14,14 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+// import TabOneScreen from '../screens/TabOneScreen';
+// import TabTwoScreen from '../screens/TabTwoScreen';
+import NewsScreen from '../screens/NewsScreen';
+import CreateNewsScreen from '../screens/CreateNewsScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import { createItem, deleteItem, getItemsByPage } from '../services/api';
+import Loading from '../components/Loading';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -54,45 +58,108 @@ function RootNavigator() {
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
+  const [loading, setLoading] = React.useState<Boolean>();
+  const [data, setData] = React.useState<[any]>();
+
   const colorScheme = useColorScheme();
 
+  async function loadData() {
+    setLoading(true);
+    try {
+      const res = await getItemsByPage();
+      if (res?.data) {
+        console.log(res?.data);
+        setData(res?.data);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDeleteItem(id: String) {
+    setLoading(true);
+    const res = await deleteItem(id);
+    if (res?.data?.deletedCount > 0) {
+      loadData();
+    } else {
+      setLoading(true);
+    }
+  }
+
+  async function handleCreateItem(props: any) {
+    const { title, content, resetCreateForm } = props;
+    setLoading(true);
+    await createItem({
+      title,
+      content
+    });
+    resetCreateForm();
+    setLoading(false);
+  }
+
+  React.useEffect(() => {
+    loadData();
+    return;
+  }, []);
+
+  function NewsTab() {
+    return <NewsScreen data={data} handleDeleteItem={handleDeleteItem} />;
+  }
+
+  function CreateNewsTab() {
+    return <CreateNewsScreen handleCreateItem={handleCreateItem} />;
+  }
+
   return (
-    <BottomTab.Navigator
-      initialRouteName="TabOne"
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
-      }}>
-      <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="tablet" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
+    <>
+      <Loading loading={loading} />
+      <BottomTab.Navigator
+        initialRouteName="TabOne"
+        screenOptions={{
+          tabBarActiveTintColor: Colors[colorScheme].tint,
+        }}
+      >
+        <BottomTab.Screen
+          name="TabOne"
+          component={NewsTab}
+          options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
+            title: 'News',
+            tabBarIcon: ({ color }) => <TabBarIcon name="newspaper-o" color={color} />,
+            headerRight: () => (
+              <Pressable
+                onPress={() => navigation.navigate('Modal')}
+                style={({ pressed }) => ({
+                  opacity: pressed ? 0.5 : 1,
+                })}>
+                {/* <FontAwesome
                 name="info-circle"
                 size={25}
                 color={Colors[colorScheme].text}
                 style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
-        })}
-      />
-      <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="tablet" color={color} />,
-        }}
-      />
-    </BottomTab.Navigator>
+              /> */}
+              </Pressable>
+            ),
+          })}
+          listeners={{
+            tabPress: (e) => {
+              // Prevent default action
+              // e.preventDefault();
+              loadData();
+            },
+          }}
+        />
+        <BottomTab.Screen
+          name="TabTwo"
+          component={CreateNewsTab}
+          options={{
+            title: 'Create News',
+            tabBarIcon: ({ color }) => <TabBarIcon name="plus-circle" color={color} />,
+          }}
+        />
+      </BottomTab.Navigator>
+    </>
   );
 }
 
