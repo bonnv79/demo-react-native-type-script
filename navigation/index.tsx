@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName, Pressable, Text } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -22,6 +22,27 @@ import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../typ
 import LinkingConfiguration from './LinkingConfiguration';
 import { createItem, deleteItem, getItemsByPage } from '../services/api';
 import Loading from '../components/Loading';
+import styled from 'styled-components/native';
+import { hasError } from '../utils';
+import Constants from 'expo-constants';
+
+const ALERT_COLOR = {
+  danger: '#f44336',
+  success: '#04AA6D',
+  info: '#2196F3',
+  warning: '#ff9800',
+};
+
+const Msg = styled(Text) <{ color?: string }>`
+  position: absolute;
+  z-index: 10;
+  top: ${Constants?.statusBarHeight}px;
+  background-color: #f44336;
+  background-color: ${(props) => props.color || ALERT_COLOR.success};
+  color: white;
+  padding: 12px;
+  width: 100%;
+`
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -57,25 +78,39 @@ function RootNavigator() {
  */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
+let timeOut: any = null;
+
 function BottomTabNavigator() {
   const [loading, setLoading] = React.useState<Boolean>();
   const [data, setData] = React.useState<[any]>();
+  const [msg, setMsg] = React.useState<any>(null);
 
   const colorScheme = useColorScheme();
 
+  const showNotify = (val: String, type?: String) => {
+    if (timeOut) {
+      clearTimeout(timeOut);
+    }
+    setMsg({
+      msg: val,
+      type
+    });
+    timeOut = setTimeout(() => {
+      setMsg('');
+    }, 3000);
+  }
+
   async function loadData() {
     setLoading(true);
-    try {
-      const res = await getItemsByPage();
-      if (res?.data) {
-        console.log(res?.data);
-        setData(res?.data);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+    const res = await getItemsByPage();
+    setLoading(false);
+
+    if (hasError(res)) {
+      showNotify(res?.message, ALERT_COLOR.danger);
+      return;
     }
+    console.log(res?.data);
+    setData(res?.data);
   }
 
   async function handleDeleteItem(id: String) {
@@ -83,20 +118,30 @@ function BottomTabNavigator() {
     const res = await deleteItem(id);
     if (res?.data?.deletedCount > 0) {
       loadData();
+      showNotify('Delete successfully');
     } else {
-      setLoading(true);
+      showNotify(res?.message, ALERT_COLOR.danger);
+      setLoading(false);
     }
   }
 
   async function handleCreateItem(props: any) {
-    const { title, content, resetCreateForm } = props;
+    const { title, content, creator = 'admin', status = 0, resetCreateForm } = props;
     setLoading(true);
-    await createItem({
+    const res = await createItem({
       title,
-      content
+      content,
+      creator,
+      status
     });
-    resetCreateForm();
     setLoading(false);
+
+    if (hasError(res)) {
+      showNotify(res?.message, ALERT_COLOR.danger);
+      return;
+    }
+    resetCreateForm();
+    showNotify('Create successfully');
   }
 
   React.useEffect(() => {
@@ -115,6 +160,13 @@ function BottomTabNavigator() {
   return (
     <>
       <Loading loading={loading} />
+      {
+        msg && (
+          <Msg color={msg.type}>
+            {msg.msg}
+          </Msg>
+        )
+      }
       <BottomTab.Navigator
         initialRouteName="TabOne"
         screenOptions={{

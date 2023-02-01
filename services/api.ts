@@ -32,29 +32,42 @@ export const sendPushNotification = async (pushToken: string, title: string, bod
   alert('Triệu hồi bạn trai 👦 thành công!')
 }
 
+const rootPath = 'https://express-bng.vercel.app/api';
+
 export const getItems = async () => {
-  const response = await axios.get(`https://express-bng.vercel.app/api/records`);
-  const result = response?.data;
-  return result || {};
+  try {
+    const response = await axios.get(`${rootPath}/items`);
+    return response?.data;
+  } catch (error: any) {
+    return error;
+  }
 }
 
 export const getItemsByPage = async () => {
-  const response = await axios.get(`https://express-bng.vercel.app/api/record?page=0&pageSize=10`);
-  const result = response?.data;
-  return result || {};
+  try {
+    const response = await axios.get(`${rootPath}/item`);
+    return response?.data;
+  } catch (error: any) {
+    return error;
+  }
 }
 
 export const createItem = async (data: any) => {
-  const req = {
-    name: data?.title,
-    position: data?.content,
+  try {
+    const req = {
+      ...data
+    }
+    return await axios.post(`${rootPath}/item/add`, req);
+  } catch (error: any) {
+    return error;
   }
-  await axios.post('https://express-bng.vercel.app/api/record/add', req)
-  // alert('Create item successlly')
 }
 
 export const deleteItem = async (id: String) => {
-  const response = await axios.delete(`https://express-bng.vercel.app/api/record/${id}`);
-  const result = response?.data;
-  return result || {};
+  try {
+    const response = await axios.delete(`${rootPath}/item/${id}`);
+    return response?.data;
+  } catch (error: any) {
+    return error;
+  }
 }

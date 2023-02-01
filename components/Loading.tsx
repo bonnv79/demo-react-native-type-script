@@ -1,20 +1,24 @@
 import { View, ActivityIndicator } from 'react-native'
+import { Overlay } from 'react-native-elements';
 import styled from 'styled-components/native'
 
-const LoadingStyled = styled(View)`
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: black;
-  opacity: 0.6;
-  z-index: 10;
-  justify-content: center;
-`
+// const LoadingStyled = styled(View)`
+//   position: fixed;
+//   width: 100%;
+//   height: 100%;
+//   background: black;
+//   opacity: 0.6;
+//   z-index: 10;
+//   justify-content: center;
+// `
 
-export default function Loading(props: { loading?: Boolean | false }) {
+export default function Loading(props: {
+  loading?: boolean | false,
+  onBackdropPress?: () => {}
+}) {
   return props?.loading ? (
-    <LoadingStyled>
+    <Overlay isVisible={props?.loading} onBackdropPress={props?.onBackdropPress}>
       <ActivityIndicator size="large" />
-    </LoadingStyled>
+    </Overlay>
   ) : <></>;
 }
