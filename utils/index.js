@@ -1,0 +1,1 @@
+export const hasError = (response) => !response || response?.status !== 200;
