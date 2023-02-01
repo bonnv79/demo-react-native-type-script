@@ -81,7 +81,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 let timeOut: any = null;
 
 function BottomTabNavigator() {
-  const [loading, setLoading] = React.useState<Boolean>();
+  const [loading, setLoading] = React.useState<boolean>();
   const [data, setData] = React.useState<[any]>();
   const [msg, setMsg] = React.useState<any>(null);
 
@@ -150,7 +150,11 @@ function BottomTabNavigator() {
   }, []);
 
   function NewsTab() {
-    return <NewsScreen data={data} handleDeleteItem={handleDeleteItem} />;
+    return <NewsScreen
+      data={data}
+      handleDeleteItem={handleDeleteItem}
+      handleEditItem={() => { }}
+    />;
   }
 
   function CreateNewsTab() {
@@ -186,11 +190,11 @@ function BottomTabNavigator() {
                   opacity: pressed ? 0.5 : 1,
                 })}>
                 {/* <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              /> */}
+                  name="info-circle"
+                  size={25}
+                  color={Colors[colorScheme].text}
+                  style={{ marginRight: 15 }}
+                /> */}
               </Pressable>
             ),
           })}
