@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "demo-react-native-type-script",
-    "slug": "demo-react-native-type-script",
+    "slug": "bng-news-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -29,6 +29,12 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "db093892-3092-4194-ac67-7cb00eaca0f0"
+      }
+    },
+    "owner": "bonnv79"
   }
 }
