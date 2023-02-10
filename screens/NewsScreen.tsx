@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import styled from 'styled-components/native';
-import { FlatList, Text, View, StyleSheet } from 'react-native';
+import { FlatList, Text, View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Button, Divider } from 'react-native-elements';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -31,14 +31,20 @@ const TimeText = styled(Text)`
 //   '2': 'Hold'
 // }
 
-function BoyScreen({
+function NewsScreen({
   data,
   handleEditItem,
   handleDeleteItem,
+  navigation,
+  route,
+  loadData,
 }: {
   data: any,
   handleEditItem: Function,
   handleDeleteItem: Function,
+  navigation?: any,
+  route?: any,
+  loadData?: any,
 }) {
   const Item = (props: any) => {
     const { _id, title, createDate, content, creator, status }: {
@@ -58,14 +64,16 @@ function BoyScreen({
         </TimeText>
         <Text>{content}</Text>
         <View style={styles.horizontal}>
-          {/* <Button
+          <Button
             style={styles.btn}
             type="clear"
             title={
               <FontAwesome size={30} style={{ marginTop: 0 }} name="edit" />
             }
-            onPress={() => handleEditItem(_id)}
-          /> */}
+            onPress={() => {
+              handleEditItem(_id);
+            }}
+          />
           <Button
             style={styles.btn}
             type="clear"
@@ -85,12 +93,19 @@ function BoyScreen({
     return <Item {...item} />;
   };
 
+  const onRefresh = () => {
+    loadData();
+  }
+
   return (
     <View style={styles.scrollView}>
       <FlatList
         data={data}
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
+        refreshControl={
+          <RefreshControl refreshing={false} onRefresh={onRefresh} />
+        }
       />
     </View>
   )
@@ -126,4 +141,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default BoyScreen
+export default NewsScreen;

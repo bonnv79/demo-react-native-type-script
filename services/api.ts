@@ -54,10 +54,25 @@ export const getItemsByPage = async () => {
 
 export const createItem = async (data: any) => {
   try {
-    const req = {
-      ...data
+    const {
+      _id,
+      createDate,
+      updateDate,
+      ...req
+    } = data;
+    if (_id) {
+      return await axios.post(`${rootPath}/item/update/${_id}`, req);
     }
     return await axios.post(`${rootPath}/item/add`, req);
+  } catch (error: any) {
+    return error;
+  }
+}
+
+export const getItemsById = async (id: String) => {
+  try {
+    const response = await axios.get(`${rootPath}/item/${id}`);
+    return response?.data;
   } catch (error: any) {
     return error;
   }

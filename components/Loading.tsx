@@ -13,7 +13,7 @@ import styled from 'styled-components/native'
 // `
 
 export default function Loading(props: {
-  loading?: boolean | false,
+  loading?: any,
   onBackdropPress?: () => {}
 }) {
   return props?.loading ? (

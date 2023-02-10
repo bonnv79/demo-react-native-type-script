@@ -20,7 +20,7 @@ import NewsScreen from '../screens/NewsScreen';
 import CreateNewsScreen from '../screens/CreateNewsScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
-import { createItem, deleteItem, getItemsByPage } from '../services/api';
+import { createItem, deleteItem, getItemsById, getItemsByPage } from '../services/api';
 import Loading from '../components/Loading';
 import styled from 'styled-components/native';
 import { hasError } from '../utils';
@@ -80,10 +80,12 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 let timeOut: any = null;
 
-function BottomTabNavigator() {
+function BottomTabNavigator(props: any) {
+  const { navigation, route } = props;
   const [loading, setLoading] = React.useState<boolean>();
   const [data, setData] = React.useState<[any]>();
   const [msg, setMsg] = React.useState<any>(null);
+  const [updateData, setUpdateData] = React.useState<any>(null);
 
   const colorScheme = useColorScheme();
 
@@ -100,7 +102,7 @@ function BottomTabNavigator() {
     }, 3000);
   }
 
-  async function loadData() {
+  async function loadData(backHome?: boolean) {
     setLoading(true);
     const res = await getItemsByPage();
     setLoading(false);
@@ -111,6 +113,22 @@ function BottomTabNavigator() {
     }
     console.log(res?.data);
     setData(res?.data);
+    if (backHome) {
+      navigation.navigate('TabOne');
+    }
+  }
+
+  async function getDataById(id: String) {
+    setLoading(true);
+    const res = await getItemsById(id);
+    setLoading(false);
+
+    if (hasError(res)) {
+      showNotify(res?.message, ALERT_COLOR.danger);
+      return;
+    }
+    console.log('getDataById: ', res?.data);
+    return res?.data;
   }
 
   async function handleDeleteItem(id: String) {
@@ -126,9 +144,10 @@ function BottomTabNavigator() {
   }
 
   async function handleCreateItem(props: any) {
-    const { title, content, creator = 'admin', status = 0, resetCreateForm } = props;
+    const { title, content, creator = 'admin', status = 0, resetCreateForm, ...req } = props;
     setLoading(true);
     const res = await createItem({
+      ...req,
       title,
       content,
       creator,
@@ -140,8 +159,20 @@ function BottomTabNavigator() {
       showNotify(res?.message, ALERT_COLOR.danger);
       return;
     }
-    resetCreateForm();
+    // if (props?._id) {
+    //   loadData(true);
+    // } else {
+    //   resetCreateForm();
+    // }
+    loadData(true);
+    // resetCreateForm();
     showNotify('Create successfully');
+  }
+
+  async function handleEditItem(id: String) {
+    const res = await getDataById(id);
+    setUpdateData(res);
+    navigation.navigate('TabTwo');
   }
 
   React.useEffect(() => {
@@ -149,16 +180,24 @@ function BottomTabNavigator() {
     return;
   }, []);
 
-  function NewsTab() {
+  function NewsTab(props: any) {
     return <NewsScreen
       data={data}
       handleDeleteItem={handleDeleteItem}
-      handleEditItem={() => { }}
+      handleEditItem={handleEditItem}
+      loadData={loadData}
+      {...props}
     />;
   }
 
-  function CreateNewsTab() {
-    return <CreateNewsScreen handleCreateItem={handleCreateItem} />;
+  function CreateNewsTab(props: any) {
+    return <CreateNewsScreen
+      handleCreateItem={handleCreateItem}
+      getDataById={getDataById}
+      showNotify={showNotify}
+      data={updateData}
+      {...props}
+    />;
   }
 
   return (
@@ -202,7 +241,7 @@ function BottomTabNavigator() {
             tabPress: (e) => {
               // Prevent default action
               // e.preventDefault();
-              loadData();
+              // loadData();
             },
           }}
         />
@@ -212,6 +251,11 @@ function BottomTabNavigator() {
           options={{
             title: 'Create News',
             tabBarIcon: ({ color }) => <TabBarIcon name="plus-circle" color={color} />,
+          }}
+          listeners={{
+            tabPress: (e) => {
+              setUpdateData(null);
+            },
           }}
         />
       </BottomTab.Navigator>
