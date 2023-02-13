@@ -4,6 +4,7 @@
  *
  */
 import { FontAwesome } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -25,6 +26,7 @@ import Loading from '../components/Loading';
 import styled from 'styled-components/native';
 import { hasError } from '../utils';
 import Constants from 'expo-constants';
+import LoginScreen from '../screens/LoginScreen';
 
 const ALERT_COLOR = {
   danger: '#f44336',
@@ -67,6 +69,9 @@ function RootNavigator() {
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
+      </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -226,20 +231,20 @@ function BottomTabNavigator(props: any) {
           name="TabOne"
           component={NewsTab}
           options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-            title: 'News',
+            title: 'News App',
             tabBarIcon: ({ color }) => <TabBarIcon name="newspaper-o" color={color} />,
             headerRight: () => (
               <Pressable
-                onPress={() => navigation.navigate('Modal')}
+                onPress={() => navigation.navigate('Login')}
                 style={({ pressed }) => ({
                   opacity: pressed ? 0.5 : 1,
                 })}>
-                {/* <FontAwesome
-                  name="info-circle"
+                <Ionicons
+                  name={true ? 'ios-log-in-outline' : 'ios-log-out-outline'}
                   size={25}
                   color={Colors[colorScheme].text}
                   style={{ marginRight: 15 }}
-                /> */}
+                />
               </Pressable>
             ),
           })}

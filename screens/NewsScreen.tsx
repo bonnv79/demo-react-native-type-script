@@ -80,7 +80,7 @@ function NewsScreen({
 
     return (
       <View style={styles.item}>
-        <Title>{title}</Title>
+        <Title onPress={onView}>{title}</Title>
         <TimeText>
           {`${creator} - ${new Date(createDate).toLocaleString()}`}
         </TimeText>
