@@ -1,12 +1,15 @@
-import { StatusBar } from 'expo-status-bar'
-import React from 'react'
-import * as Notifications from 'expo-notifications'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { ThemeProvider } from 'react-native-elements'
+import React from 'react';
+import { StatusBar } from 'expo-status-bar';
+import * as Notifications from 'expo-notifications';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ThemeProvider } from 'react-native-elements';
+import { Provider } from 'react-redux';
 
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
+
+import { store } from './app/reducers';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -24,12 +27,14 @@ export default function App() {
     return null;
   } else {
     return (
-      <SafeAreaProvider>
-        <ThemeProvider>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar />
-        </ThemeProvider>
-      </SafeAreaProvider>
+      <Provider store={store}>
+        <SafeAreaProvider>
+          <ThemeProvider>
+            <Navigation colorScheme={colorScheme} />
+            <StatusBar />
+          </ThemeProvider>
+        </SafeAreaProvider>
+      </Provider>
     );
   }
 }

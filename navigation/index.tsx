@@ -175,6 +175,10 @@ function BottomTabNavigator(props: any) {
     navigation.navigate('TabTwo');
   }
 
+  async function handleViewItem(id: String) {
+    navigation.navigate('Modal');
+  }
+
   React.useEffect(() => {
     loadData();
     return;
@@ -185,7 +189,9 @@ function BottomTabNavigator(props: any) {
       data={data}
       handleDeleteItem={handleDeleteItem}
       handleEditItem={handleEditItem}
+      handleViewItem={handleViewItem}
       loadData={loadData}
+      getDataById={getDataById}
       {...props}
     />;
   }
