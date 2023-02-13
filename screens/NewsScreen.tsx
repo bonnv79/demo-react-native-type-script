@@ -8,17 +8,17 @@ import { ButtonGroup, Divider } from 'react-native-elements';
 import { addCartItem } from '../app/actions';
 
 const Title = styled(Text)`
-  font-size: 1.8em;
+  font-size: 28px;
   margin-bottom: 8px;
   font-weight: bold;
 `
 const TimeText = styled(Text)`
-  font-size: 0.8em;
+  font-size: 12px;
   margin-bottom: 8px;
   text-transform: capitalize;
 `
 const ContentText = styled(Text)`
-  font-size: 1em;
+  font-size: 16px;
 `
 
 function NewsScreen({
