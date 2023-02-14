@@ -32,6 +32,7 @@ function NewsScreen({
   route,
   loadData,
   cartData,
+  isLogin,
 }: {
   data: any,
   handleEditItem: Function,
@@ -43,6 +44,7 @@ function NewsScreen({
   route?: any,
   loadData?: any,
   cartData: any,
+  isLogin: any,
 }) {
   const buttons = ['View', 'Edit', 'Delete']
 
@@ -85,43 +87,17 @@ function NewsScreen({
           {`${creator} - ${new Date(createDate).toLocaleString()}`}
         </TimeText>
         <ContentText>{content}</ContentText>
-        <View style={styles.horizontal}>
-          <ButtonGroup
-            onPress={onPressBtnGroup}
-            buttons={buttons}
-            containerStyle={{ marginTop: 16 }}
-          />
-          {/* <Button
-            style={styles.btn}
-            // type="clear"
-            title={
-              <FontAwesome size={30} style={{ marginTop: 0 }} name="eye" />
-            }
-            onPress={async () => {
-              const data = await getDataById(_id);
-              handleAddCartItem(data);
-              handleViewItem(_id);
-            }}
-          />
-          <Button
-            style={styles.btn}
-            // type="clear"
-            title={
-              <FontAwesome size={30} style={{ marginTop: 0 }} name="edit" />
-            }
-            onPress={() => {
-              handleEditItem(_id);
-            }}
-          />
-          <Button
-            style={styles.btn}
-            // type="clear"
-            title={
-              <FontAwesome size={30} style={{ marginTop: 0 }} name="trash" />
-            }
-            onPress={() => handleDeleteItem(_id)}
-          /> */}
-        </View>
+        {
+          isLogin && (
+            <View style={styles.horizontal}>
+              <ButtonGroup
+                onPress={onPressBtnGroup}
+                buttons={buttons}
+                containerStyle={{ marginTop: 16, marginHorizontal: 0 }}
+              />
+            </View>
+          )
+        }
         <Divider style={styles.hr} orientation="horizontal" />
       </View>
     )
@@ -182,7 +158,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state: any) => {
   return {
-    cartData: state.cart.cartData
+    cartData: state.cart.cartData,
+    isLogin: !!state.user.token
   }
 }
 

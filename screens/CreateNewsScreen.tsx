@@ -12,7 +12,7 @@ const TitleForm = styled(Text)`
   font-weight: bold;
 `
 
-function GirlScreen({
+function CreateNewsScreen({
   handleCreateItem,
   showNotify,
   navigation,
@@ -52,7 +52,8 @@ function GirlScreen({
         <Input
           containerStyle={styles.inputContainerStyle}
           label="Title"
-          value={title}
+          // value={title}
+          defaultValue={title}
           onChangeText={(val) => {
             setTitle(val);
             if (!isTitle) {
@@ -65,7 +66,8 @@ function GirlScreen({
         <Input
           containerStyle={styles.inputContainerStyle}
           label="Content"
-          value={content}
+          // value={content}
+          defaultValue={content}
           onChangeText={(val) => {
             setContent(val);
             if (!isContent) {
@@ -89,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GirlScreen
+export default CreateNewsScreen

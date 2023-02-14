@@ -1,7 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Input, Button, Text } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { setToken } from '../app/actions/user';
 
 const Page = styled(View)`
   padding: 30px 30px 0 30px;
@@ -17,10 +19,14 @@ function LoginScreen({
   navigation,
   route,
   data,
+  handleSetToken,
+  // token,
 }: {
   navigation?: any,
   route?: any,
   data?: any,
+  handleSetToken: Function,
+  // token?: any,
 }) {
   const [userName, setUserName] = React.useState(data?.userName);
   const [password, setPassword] = React.useState(data?.password);
@@ -29,7 +35,12 @@ function LoginScreen({
   const [isPassword, setIsPassword] = React.useState(false);
 
   const handleLogin = (reqData: any) => {
-
+    if (reqData?.userName?.toLowerCase() === 'admin' && reqData?.password?.toLowerCase() === 'admin') {
+      handleSetToken('admin');
+      navigation.navigate('Root');
+    } else {
+      alert('The Username or Password is Incorrect');
+    }
   }
 
   const formTile = 'Login'; // Register
@@ -45,7 +56,8 @@ function LoginScreen({
         <Input
           containerStyle={styles.inputContainerStyle}
           label="User Name"
-          value={userName}
+          // value={userName}
+          defaultValue={userName}
           onChangeText={(val) => {
             setUserName(val);
             if (!isUserName) {
@@ -59,7 +71,8 @@ function LoginScreen({
         <Input
           containerStyle={styles.inputContainerStyle}
           label="Password"
-          value={password}
+          // value={password}
+          defaultValue={password}
           onChangeText={(val) => {
             setPassword(val);
             if (!isPassword) {
@@ -71,9 +84,12 @@ function LoginScreen({
           secureTextEntry={true}
           leftIcon={{ type: 'font-awesome', name: 'lock' }}
         />
-        <Button disabled={disabledBtn} title={btnTitle} onPress={async () => {
+        <Button style={styles.loginBtn} disabled={disabledBtn} title={btnTitle} onPress={() => {
           handleLogin({ ...data, userName, password });
         }} />
+        <TouchableOpacity onPress={() => navigation.navigate('Root')} style={styles.link}>
+          <Text style={styles.linkText}>Go to back home!</Text>
+        </TouchableOpacity>
       </View>
     </Page>
   )
@@ -83,6 +99,32 @@ const styles = StyleSheet.create({
   inputContainerStyle: {
     paddingHorizontal: 0,
   },
+  loginBtn: {
+    marginTop: 16
+  },
+  link: {
+    marginTop: 15,
+    paddingVertical: 15,
+  },
+  linkText: {
+    fontSize: 14,
+    color: '#2e78b7',
+    textAlign: 'center'
+  },
 });
 
-export default LoginScreen;
+const mapStateToProps = (state: any) => {
+  return {
+    // token: state.user.token
+  }
+}
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    handleSetToken: (data: any) => {
+      dispatch(setToken(data));
+    },
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
