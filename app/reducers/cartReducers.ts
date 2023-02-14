@@ -4,7 +4,7 @@ const INITIAL_STATE = {
   cartData: {}
 };
 
-export default function cartReducers(state = INITIAL_STATE, action) {
+export default function cartReducers(state = INITIAL_STATE, action: any) {
   switch (action.type) {
     case ADD_CART_ITEM:
       return {

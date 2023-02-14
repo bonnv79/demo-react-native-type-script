@@ -3,6 +3,7 @@ import { Platform, StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { addCartItem } from '../app/actions';
+import { getCartDataState } from '../app/selector/cartSelector';
 
 import { View } from '../components/Themed';
 
@@ -45,7 +46,7 @@ function ModalScreen({ data }: { data: any }) {
 
 const mapStateToProps = (state: any) => {
   return {
-    data: state.cart.cartData
+    data: getCartDataState(state) // state.cart.cartData
   }
 }
 
