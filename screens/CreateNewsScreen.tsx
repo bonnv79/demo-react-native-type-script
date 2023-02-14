@@ -2,6 +2,7 @@ import * as React from 'react'
 import styled from 'styled-components/native'
 import { View, StyleSheet } from 'react-native'
 import { Input, Button, Text } from 'react-native-elements'
+import BackHome from '../components/BackHome'
 
 const Page = styled(View)`
   padding: 30px 30px 0 30px;
@@ -77,9 +78,10 @@ function CreateNewsScreen({
           placeholder="Input content..."
           errorMessage={contentError}
         />
-        <Button disabled={disabledBtn} title={btnTitle} onPress={async () => {
+        <Button style={styles.loginBtn} disabled={disabledBtn} title={btnTitle} onPress={async () => {
           handleCreateItem({ ...data, title, content, resetCreateForm });
         }} />
+        <BackHome onPress={() => navigation.navigate('TabOne')} />
       </View>
     </Page>
   )
@@ -88,6 +90,9 @@ function CreateNewsScreen({
 const styles = StyleSheet.create({
   inputContainerStyle: {
     paddingHorizontal: 0,
+  },
+  loginBtn: {
+    marginTop: 16
   },
 });
 

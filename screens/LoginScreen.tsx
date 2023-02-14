@@ -4,6 +4,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Input, Button, Text } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { setToken } from '../app/actions/user';
+import BackHome from '../components/BackHome';
 
 const Page = styled(View)`
   padding: 30px 30px 0 30px;
@@ -87,9 +88,7 @@ function LoginScreen({
         <Button style={styles.loginBtn} disabled={disabledBtn} title={btnTitle} onPress={() => {
           handleLogin({ ...data, userName, password });
         }} />
-        <TouchableOpacity onPress={() => navigation.navigate('Root')} style={styles.link}>
-          <Text style={styles.linkText}>Go to back home!</Text>
-        </TouchableOpacity>
+        <BackHome onPress={() => navigation.navigate('Root')} />
       </View>
     </Page>
   )
@@ -101,15 +100,6 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: 16
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-  linkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-    textAlign: 'center'
   },
 });
 
