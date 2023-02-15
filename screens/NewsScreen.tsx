@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { FlatList, Text, View, StyleSheet, RefreshControl } from 'react-native';
 import { ButtonGroup, Divider } from 'react-native-elements';
-// import { FontAwesome } from '@expo/vector-icons';
-import { addCartItem } from '../app/actions';
+import { getNews, getNewsById, requestDeleteNews } from '../app/actions/newsActions';
+import { getNewsDataSelector } from '../app/selector/newsSelector';
 
 const Title = styled(Text)`
   font-size: 28px;
@@ -23,31 +23,21 @@ const ContentText = styled(Text)`
 
 function NewsScreen({
   data,
-  handleEditItem,
-  handleDeleteItem,
-  handleViewItem,
-  handleAddCartItem,
-  getDataById,
-  navigation,
-  route,
-  loadData,
-  cartData,
   isLogin,
+  navigation,
+  getNewsList,
+  handleDeleteNews,
+  handleGetNewsById,
 }: {
   data: any,
-  handleEditItem: Function,
-  handleDeleteItem: Function,
-  handleViewItem: Function,
-  handleAddCartItem: Function,
-  getDataById: Function,
-  navigation?: any,
-  route?: any,
-  loadData?: any,
-  cartData: any,
   isLogin: any,
+  navigation: any,
+  getNewsList?: any,
+  handleDeleteNews: Function,
+  handleGetNewsById: Function,
+
 }) {
   const buttons = ['View', 'Edit', 'Delete']
-
   const Item = (props: any) => {
     const { _id, title, createDate, content, creator, status }: {
       _id: String,
@@ -59,9 +49,12 @@ function NewsScreen({
     } = props || {};
 
     async function onView() {
-      const data = await getDataById(_id);
-      handleAddCartItem(data);
-      handleViewItem(_id);
+      handleGetNewsById({ id: _id });
+      navigation.navigate('Modal');
+    }
+
+    const switchEditPage = () => {
+      navigation.navigate('TabTwo');
     }
 
     const onPressBtnGroup = (index: any) => {
@@ -70,10 +63,10 @@ function NewsScreen({
           onView();
           break;
         case 1:
-          handleEditItem(_id);
+          handleGetNewsById({ id: _id, switchEditPage });
           break;
         case 2:
-          handleDeleteItem(_id)
+          handleDeleteNews({ id: _id })
           break;
         default:
           break;
@@ -109,8 +102,13 @@ function NewsScreen({
   };
 
   const onRefresh = () => {
-    loadData();
+    getNewsList();
   }
+
+  React.useEffect(() => {
+    getNewsList();
+    return;
+  }, []);
 
   return (
     <View style={styles.scrollView}>
@@ -130,12 +128,6 @@ const styles = StyleSheet.create({
   item: {
     padding: 24,
     paddingBottom: 0,
-    // marginBottom: 16,
-    // border: '1px solid #c1c1c1',
-    // borderRadius: 8,
-    // backgroundColor: '#f9c2ff',
-    // marginVertical: 4,
-    // marginHorizontal: 8,
   },
   scrollView: {
     maxHeight: '100%'
@@ -149,25 +141,24 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   horizontal: {
-    // display: 'flex',
-    // flexDirection: 'row',
-    // width: '100%',
-    // justifyContent: 'center'
+
   }
 });
 
 const mapStateToProps = (state: any) => {
   return {
-    cartData: state.cart.cartData,
-    isLogin: !!state.user.token
+    isLogin: !!state.user.token,
+    data: getNewsDataSelector(state),
   }
 }
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    handleAddCartItem: (data: any) => {
-      dispatch(addCartItem(data));
-    }
+    handleGetNewsById: (data: any) => {
+      dispatch(getNewsById(data));
+    },
+    handleDeleteNews: (data: any) => dispatch(requestDeleteNews(data)),
+    getNewsList: () => dispatch(getNews()),
   }
 }
 

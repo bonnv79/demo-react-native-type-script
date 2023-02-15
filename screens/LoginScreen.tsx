@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Input, Button, Text } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { setToken } from '../app/actions/user';
+import { setToken } from '../app/actions/userActions';
 import BackHome from '../components/BackHome';
 
 const Page = styled(View)`

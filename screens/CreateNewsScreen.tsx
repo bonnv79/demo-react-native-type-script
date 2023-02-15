@@ -3,6 +3,9 @@ import styled from 'styled-components/native'
 import { View, StyleSheet } from 'react-native'
 import { Input, Button, Text } from 'react-native-elements'
 import BackHome from '../components/BackHome'
+import { connect } from 'react-redux'
+import { getNewsInfoState } from '../app/selector/newsSelector'
+import { requestCreateNews } from '../app/actions/newsActions'
 
 const Page = styled(View)`
   padding: 30px 30px 0 30px;
@@ -14,21 +17,14 @@ const TitleForm = styled(Text)`
 `
 
 function CreateNewsScreen({
-  handleCreateItem,
-  showNotify,
+  handleCreateNews,
   navigation,
-  route,
   data,
 }: {
-  handleCreateItem: Function,
-  showNotify: Function,
+  handleCreateNews: Function,
   navigation?: any,
-  route?: any,
   data?: any,
 }) {
-  if (route?.name !== 'TabTwo') {
-    return <></>;
-  }
   const [title, setTitle] = React.useState(data?.title);
   const [content, setContent] = React.useState(data?.content);
 
@@ -53,7 +49,6 @@ function CreateNewsScreen({
         <Input
           containerStyle={styles.inputContainerStyle}
           label="Title"
-          // value={title}
           defaultValue={title}
           onChangeText={(val) => {
             setTitle(val);
@@ -67,7 +62,6 @@ function CreateNewsScreen({
         <Input
           containerStyle={styles.inputContainerStyle}
           label="Content"
-          // value={content}
           defaultValue={content}
           onChangeText={(val) => {
             setContent(val);
@@ -79,7 +73,9 @@ function CreateNewsScreen({
           errorMessage={contentError}
         />
         <Button style={styles.loginBtn} disabled={disabledBtn} title={btnTitle} onPress={async () => {
-          handleCreateItem({ ...data, title, content, resetCreateForm });
+          const { creator = 'admin', status = 0 } = data;
+          handleCreateNews({ ...data, title, content, creator, status });
+          navigation.navigate('TabOne');
         }} />
         <BackHome onPress={() => navigation.navigate('TabOne')} />
       </View>
@@ -96,4 +92,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateNewsScreen
+const mapStateToProps = (state: any) => {
+  return {
+    data: getNewsInfoState(state),
+  }
+}
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    handleCreateNews: (data: any) => dispatch(requestCreateNews(data))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateNewsScreen);

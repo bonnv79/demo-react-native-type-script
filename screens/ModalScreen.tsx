@@ -3,7 +3,7 @@ import { Platform, StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { addCartItem } from '../app/actions';
-import { getCartDataState } from '../app/selector/cartSelector';
+import { getNewsInfoState } from '../app/selector/newsSelector';
 
 import { View } from '../components/Themed';
 
@@ -30,6 +30,11 @@ function ModalScreen({ data }: { data: any }) {
     creator: String,
     status: Number,
   } = data || {};
+  if (!data?._id) {
+    return (
+      <Text style={styles.loadingText}>Loding...</Text>
+    )
+  }
   return (
     <View style={styles.container}>
       <Title>{title}</Title>
@@ -46,7 +51,7 @@ function ModalScreen({ data }: { data: any }) {
 
 const mapStateToProps = (state: any) => {
   return {
-    data: getCartDataState(state) // state.cart.cartData
+    data: getNewsInfoState(state),
   }
 }
 
@@ -63,18 +68,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(ModalScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
     paddingHorizontal: 16,
     paddingVertical: 16
   },
-  // title: {
-  //   fontSize: 32,
-  //   fontWeight: 'bold',
-  // },
-  // separator: {
-  //   marginVertical: 30,
-  //   height: 1,
-  //   width: '80%',
-  // },
+  loadingText: {
+    textAlign: 'center',
+    paddingVertical: 16
+  }
 });

@@ -9,7 +9,7 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 
-import { store } from './app/reducers';
+import { store } from './app/store';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

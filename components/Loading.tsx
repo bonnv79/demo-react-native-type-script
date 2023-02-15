@@ -17,8 +17,15 @@ export default function Loading(props: {
   onBackdropPress?: () => {}
 }) {
   return props?.loading ? (
-    <Overlay isVisible={props?.loading} onBackdropPress={props?.onBackdropPress}>
-      <ActivityIndicator size="large" />
+    <Overlay
+      isVisible={props?.loading}
+      onBackdropPress={props?.onBackdropPress}
+      overlayStyle={{
+        backgroundColor: 'transparent',
+        // boxShadow: 'none',
+      }}
+    >
+      <ActivityIndicator size="large" color="white" />
     </Overlay>
   ) : <></>;
 }

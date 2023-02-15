@@ -1,4 +1,4 @@
-import { SET_LOGIN } from "../const/user";
+import { SET_LOGIN } from "../const/userConst";
 
 export const setToken = (data: any) => {
   return {

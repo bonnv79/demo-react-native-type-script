@@ -1,7 +1,7 @@
-import { SET_LOGIN } from "../const/user";
+import { SET_LOGIN } from "../const/userConst";
 
 const INITIAL_STATE = {
-  token: 'a'
+  token: 'admin'
 };
 
 export default function userReducers(state = INITIAL_STATE, action: any) {
